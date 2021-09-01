@@ -15,18 +15,19 @@ import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
 
 class CardCollectFormView constructor(context: Context, messenger: BinaryMessenger?, id: Int) :
-        BaseFormView(context, messenger, id, R.layout.collect_form_layout) {
+        BaseFormView(context, messenger, id, R.layout.pin) {
 
     override val viewType: String get() = MainActivity.COLLECT_FORM_VIEW_TYPE
 
     private val vgsCollect = VGSCollect(context, MainActivity.VAULT_ID, MainActivity.ENVIRONMENT)
 
-    private val cardNumberAlias = rootView.findViewById<TextView>(R.id.tvCardNumberAlias)
-    private val cardDateAlias = rootView.findViewById<TextView>(R.id.tvExpDateAlias)
+//    private val cardNumberAlias = rootView.findViewById<TextView>(R.id.tvCardNumberAlias)
+//    private val cardDateAlias = rootView.findViewById<TextView>(R.id.tvExpDateAlias)
 
     init {
-        vgsCollect.bindView(rootView.findViewById(R.id.etCardNumber))
-        vgsCollect.bindView(rootView.findViewById(R.id.etExpDate))
+//        vgsCollect.bindView(rootView.findViewById(R.id.etCardNumber))
+//        vgsCollect.bindView(rootView.findViewById(R.id.etExpDate))
+        vgsCollect.bindView(rootView.findViewById(R.id.pinField))
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -50,22 +51,7 @@ class CardCollectFormView constructor(context: Context, messenger: BinaryMesseng
 
     private fun handleSuccess(successResponse: VGSResponse.SuccessResponse, result: MethodChannel.Result) {
         with(successResponse.body?.toJson()) {
-            var cardAlias: String? = null
-            var dateAlias: String? = null
-            try {
-                (this?.get("json") as? JSONObject)?.let {
-                    cardAlias = it.get("cardNumber").toString()
-                    dateAlias = it.get("expDate").toString()
-                }
-            } catch (e: Exception) {
-                Log.d("CardCollectFormView", e.toString())
-            }
-            cardNumberAlias.text = cardAlias.toString()
-            cardDateAlias.text = dateAlias.toString()
-            result.success(mapOf(
-                    "cardNumber" to cardAlias,
-                    "expDate" to dateAlias,
-            ))
+            result.success(null)
         }
     }
 
