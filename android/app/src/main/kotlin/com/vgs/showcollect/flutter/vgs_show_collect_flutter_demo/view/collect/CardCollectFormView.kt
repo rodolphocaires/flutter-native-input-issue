@@ -24,6 +24,7 @@ class CardCollectFormView constructor(context: Context, messenger: BinaryMesseng
 
     private val pinField = rootView.findViewById<VGSEditText>(R.id.pinField)
     init {
+        pinField.setFieldName("card_pin")
         vgsCollect.bindView(pinField)
     }
 
