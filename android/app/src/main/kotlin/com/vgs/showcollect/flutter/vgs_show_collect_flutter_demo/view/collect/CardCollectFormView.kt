@@ -6,6 +6,7 @@ import android.widget.TextView
 import com.verygoodsecurity.vgscollect.core.HTTPMethod
 import com.verygoodsecurity.vgscollect.core.VGSCollect
 import com.verygoodsecurity.vgscollect.core.model.network.VGSResponse
+import com.verygoodsecurity.vgscollect.widget.VGSEditText
 import com.vgs.showcollect.flutter.vgs_show_collect_flutter_demo.MainActivity
 import com.vgs.showcollect.flutter.vgs_show_collect_flutter_demo.R
 import com.vgs.showcollect.flutter.vgs_show_collect_flutter_demo.view.BaseFormView
@@ -21,18 +22,18 @@ class CardCollectFormView constructor(context: Context, messenger: BinaryMesseng
 
     private val vgsCollect = VGSCollect(context, MainActivity.VAULT_ID, MainActivity.ENVIRONMENT)
 
-//    private val cardNumberAlias = rootView.findViewById<TextView>(R.id.tvCardNumberAlias)
-//    private val cardDateAlias = rootView.findViewById<TextView>(R.id.tvExpDateAlias)
-
+    private val pinField = rootView.findViewById<VGSEditText>(R.id.pinField)
     init {
-//        vgsCollect.bindView(rootView.findViewById(R.id.etCardNumber))
-//        vgsCollect.bindView(rootView.findViewById(R.id.etExpDate))
-        vgsCollect.bindView(rootView.findViewById(R.id.pinField))
+        vgsCollect.bindView(pinField)
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "redactCard" -> redactCard(result)
+            "unfocus" -> {
+//                pinField.hideKeyboard()
+                pinField.clearFocus()
+            }
         }
     }
 

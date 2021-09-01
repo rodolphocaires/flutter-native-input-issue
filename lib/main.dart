@@ -57,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
+      onTap: () => unfocus(),
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
@@ -194,6 +194,11 @@ class _MyHomePageState extends State<MyHomePage> {
               creationParamsCodec: StandardMessageCodec()))
     ]);
   }
+
+  unfocus() {
+    FocusScope.of(context).unfocus();
+    collectController.unfocus();
+  }
 }
 
 class CardCollectFormController {
@@ -203,5 +208,9 @@ class CardCollectFormController {
 
   Future<Map<dynamic, dynamic>> redactCardAsync() async {
     return await _channel.invokeMethod('redactCard', null);
+  }
+
+  unfocus() {
+    _channel.invokeMethod('unfocus');
   }
 }
