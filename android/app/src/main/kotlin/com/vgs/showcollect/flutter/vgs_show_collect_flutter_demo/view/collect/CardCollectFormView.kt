@@ -31,7 +31,7 @@ class CardCollectFormView constructor(context: Context, messenger: BinaryMesseng
         when (call.method) {
             "redactCard" -> redactCard(result)
             "unfocus" -> {
-//                pinField.hideKeyboard()
+                pinField.hideKeyboard()
                 pinField.clearFocus()
             }
         }
