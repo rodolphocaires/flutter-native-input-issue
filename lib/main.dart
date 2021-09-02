@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   CardCollectFormController collectController;
   TextEditingController textEditingController = TextEditingController();
   PageController pageController = PageController();
-
+  String actualValue = "";
   String cardToken;
   String dateToken;
 
@@ -85,7 +85,10 @@ class _MyHomePageState extends State<MyHomePage> {
             keyboardType: TextInputType.number,
           ),
           ElevatedButton(
-            onPressed: () => pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.easeIn),
+            onPressed: () {
+              unfocus();
+              pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.easeIn)
+            },
             child: Text('Avançar'),
           ),
         ],
@@ -99,10 +102,12 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(
-            height: 50,
-            width: double.infinity,
-            child: _cardCollect(),
+          Container(
+            child: SizedBox(
+              height: 50,
+              width: double.infinity,
+              child: _cardCollect(),
+            ),
           ),
           Column(
             children: [
@@ -120,28 +125,34 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _cardCollect() {
     final Map<String, dynamic> creationParams = <String, dynamic>{};
-    return PlatformViewLink(
-      viewType: COLLECT_FORM_VIEW_TYPE,
-      surfaceFactory: (BuildContext context, PlatformViewController controller) {
-        return AndroidViewSurface(
-          controller: controller,
-          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
-          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-        );
-      },
-      onCreatePlatformView: (PlatformViewCreationParams params) {
-        var platformView = PlatformViewsService.initSurfaceAndroidView(
-          id: params.id,
+    return GestureDetector(
+      onTap: () => focus(),
+      behavior: HitTestBehavior.opaque,
+      child: IgnorePointer(
+        child: PlatformViewLink(
           viewType: COLLECT_FORM_VIEW_TYPE,
-          layoutDirection: TextDirection.ltr,
-          creationParams: creationParams,
-          creationParamsCodec: StandardMessageCodec(),
-        );
-        platformView.addOnPlatformViewCreatedListener(params.onPlatformViewCreated);
-        platformView.addOnPlatformViewCreatedListener(_createCardCollectController);
-        platformView.create();
-        return platformView;
-      },
+          surfaceFactory: (BuildContext context, PlatformViewController controller) {
+            return AndroidViewSurface(
+              controller: controller,
+              gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+              hitTestBehavior: PlatformViewHitTestBehavior.transparent,
+            );
+          },
+          onCreatePlatformView: (PlatformViewCreationParams params) {
+            var platformView = PlatformViewsService.initSurfaceAndroidView(
+              id: params.id,
+              viewType: COLLECT_FORM_VIEW_TYPE,
+              layoutDirection: TextDirection.ltr,
+              creationParams: creationParams,
+              creationParamsCodec: StandardMessageCodec(),
+            );
+            platformView.addOnPlatformViewCreatedListener(params.onPlatformViewCreated);
+            platformView.addOnPlatformViewCreatedListener(_createCardCollectController);
+            platformView.create();
+            return platformView;
+          },
+        ),
+      ),
     );
   }
 
@@ -197,7 +208,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   unfocus() {
     FocusScope.of(context).unfocus();
-    collectController.unfocus();
+    try{
+      collectController.unfocus();
+    }
+    catch(ex){
+      print(ex);
+    }
+
+  }
+
+  focus() {
+    collectController.focus();
   }
 }
 
@@ -212,5 +233,14 @@ class CardCollectFormController {
 
   unfocus() {
     _channel.invokeMethod('unfocus');
+  }
+
+  focus() {
+    _channel.invokeMethod('focus');
+  }
+
+  setText(String text) {
+    if (text == null) text = "";
+    _channel.invokeMethod('setText', text);
   }
 }

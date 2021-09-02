@@ -24,7 +24,6 @@ class CardCollectFormView constructor(context: Context, messenger: BinaryMesseng
 
     private val pinField = rootView.findViewById<VGSEditText>(R.id.pinField)
     init {
-        pinField.setFieldName("card_pin")
         vgsCollect.bindView(pinField)
     }
 
@@ -35,7 +34,16 @@ class CardCollectFormView constructor(context: Context, messenger: BinaryMesseng
                 pinField.hideKeyboard()
                 pinField.clearFocus()
             }
+            "focus" -> {
+                pinField.requestFocus()
+                pinField.showKeyboard()
+            }
         }
+    }
+
+    private fun setText(call: MethodCall, result: MethodChannel.Result){
+        pinField.setText(call.arguments.toString())
+        result.success(null)
     }
 
     private fun redactCard(result: MethodChannel.Result) {
